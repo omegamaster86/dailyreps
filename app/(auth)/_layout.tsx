@@ -1,47 +1,47 @@
-import { Redirect, Tabs } from 'expo-router';
+import { Redirect } from 'expo-router'
+import { useAuth } from '@clerk/clerk-expo'
+import { Tabs } from 'expo-router';
 import React from 'react';
 
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
-// Import the `useAuth` hook from Clerk
-import { useAuth } from '@clerk/clerk-expo';
 
-export default function TabLayout() {
+export default function AuthRoutesLayout() {
   const colorScheme = useColorScheme();
-
-  // Redirect if the user is not signed in
   const { isSignedIn } = useAuth()
-  if(!isSignedIn) {
-    return (
-      <Redirect href={'/sign-in'} />
-    )
+
+  if (isSignedIn) {
+    return <Redirect href={'/'} />
   }
 
   return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
+        headerShown: false
+      }}
+      sceneContainerStyle={{
+        backgroundColor: "white"
       }}>
       <Tabs.Screen
-        name="index"
+        name="sign-in"
         options={{
-          title: 'Home',
+          title: 'Sign in',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
+            <TabBarIcon name={focused ? 'person' : 'person-outline'} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="sign-up"
         options={{
-          title: 'Explore',
+          title: 'Sign up',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
+            <TabBarIcon name={focused ? 'person-add' : 'person-add-outline'} color={color} />
           ),
         }}
       />
     </Tabs>
-  );
+  )
 }
