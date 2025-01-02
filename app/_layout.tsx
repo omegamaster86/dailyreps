@@ -77,6 +77,33 @@ export default function RootLayout() {
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
               <Stack.Screen name="(auth)" options={{ headerShown: false }} />
               <Stack.Screen name="+not-found" />
+              <Stack.Screen name="(screens)/new-workout" options={{
+                title: "New workout",
+                contentStyle: {
+                  backgroundColor: "white"
+                }
+              }} />
+              <Stack.Screen name="(screens)/log-reps/[workoutId]" options={{
+                title: "Log reps",
+                contentStyle: {
+                  backgroundColor: "white",
+                  paddingTop: 8
+                }
+              }} />
+              <Stack.Screen name="(screens)/edit-workout/[workoutId]" options={{
+                title: "Edit workout",
+                contentStyle: {
+                  backgroundColor: "white",
+                  paddingTop: 8
+                }
+              }} />
+              <Stack.Screen name="(screens)/edit-entry/[entryId]" options={{
+                title: "Edit entry",
+                contentStyle: {
+                  backgroundColor: "white",
+                  paddingTop: 8
+                }
+              }} />
             </Stack>
           </ThemeProvider>
         </ClerkLoaded>
