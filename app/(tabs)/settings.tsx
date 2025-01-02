@@ -1,5 +1,5 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { StyleSheet } from 'react-native';
+import { ActivityIndicator, StyleSheet } from 'react-native';
 
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
@@ -7,10 +7,20 @@ import { ThemedView } from '@/components/ThemedView';
 import React from 'react';
 import { useAuth, useUser } from '@clerk/clerk-expo';
 import Button from '@/components/Button';
+// Import the `useQuery` hook to access the Convex data
+import { useQuery } from 'convex/react';
+// Import the API which is generated from the Convex model code
+import { api } from '@/convex/_generated/api';
+// `ListItem` displays the list of workouts
+import ListItem from '@/components/ListItem';
+// `router` is used to navigate between screens
+import { router } from 'expo-router';
 
 export default function Settings() {
   const { user } = useUser()
   const { signOut } = useAuth();
+  
+  const workouts = useQuery(api.workouts.list)
 
   const onSignOutPress = async () => {
     try {
@@ -29,6 +39,22 @@ export default function Settings() {
         <Button onPress={onSignOutPress}>
           Sign out
         </Button>
+        <ThemedText type="subtitle">
+          Edit workouts
+        </ThemedText>
+        {!workouts ? <ActivityIndicator size="large" /> : (
+          <ThemedView>
+            {workouts.map(w => (
+              <ListItem
+                key={w._id}
+                onPress={() => router.push(`/edit-workout/${w._id}`)}>
+                <ThemedText>
+                  {w.name}
+                </ThemedText>
+              </ListItem>
+            ))}
+          </ThemedView>
+        )}
     </ParallaxScrollView>
   );
 }
