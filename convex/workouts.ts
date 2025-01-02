@@ -96,3 +96,39 @@ export const listWithReps = query({
     return workouts
   },
 });
+
+export const listWithRepsForHistory = query({
+  args: {
+    start: v.number(),
+    end: v.number()
+  },
+  handler: async (ctx, args) => {
+    const auth = await ctx.auth.getUserIdentity()
+    let workouts = await ctx.db.query("workouts")
+      .filter(q => q.eq(q.field("userId"), auth?.subject))
+      .collect();
+
+    let reps = await Promise.all(
+      (workouts ?? []).map(wo => ctx.db.query("logged_reps")
+        .filter(q => q.and(
+          q.eq(q.field("workoutId"), wo._id),
+          q.gt(q.field("timestamp"), args.start),
+          q.lte(q.field("timestamp"), args.end),
+        ))
+        .collect()
+      )
+    )
+
+    reps.flat().forEach(r => {
+      let workout = workouts.find(w => w._id === r.workoutId)
+      if(workout) {
+        if(workout.loggedRepEntries === undefined) workout.loggedRepEntries = []
+        workout.loggedRepEntries.push(r)
+      }
+    })
+
+    workouts = workouts.filter(w => w.isDeleted !== true || w.loggedRepEntries !== undefined);
+
+    return workouts
+  },
+});
