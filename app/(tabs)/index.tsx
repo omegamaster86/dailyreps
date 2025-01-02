@@ -11,7 +11,15 @@ import Button from "@/components/Button";
 import { router } from 'expo-router';
 
 export default function HomeScreen() {
-  const workouts = useQuery(api.workouts.list)
+  const start = new Date()
+  start.setHours(0,0,0,0)
+  const end = new Date()
+  end.setHours(23, 59, 59, 999)
+
+  const workouts = useQuery(api.workouts.listWithReps, {
+    start: start.getTime(),
+    end: end.getTime()
+  });
 
   return (
     <ParallaxScrollView
@@ -29,9 +37,9 @@ export default function HomeScreen() {
           <Button onPress={() => router.push("/new-workout")}>
             <Ionicons size={16} name="add-outline" /> New workout
           </Button>
-          {workouts.map(({ _id, name }) => (
-            <ListItem key={_id} onPress={() => {}}>
-              { name }
+          {workouts.map(({ _id, name, currentReps, targetReps }) => (
+            <ListItem key={_id} onPress={() => router.push(`/log-reps/${_id}`)}>
+              { name } ({currentReps ?? 0}/{targetReps})
             </ListItem>
           ))}
           </>
